@@ -466,6 +466,54 @@
                         <!-- Inhalt wird per JS eingefügt -->
                     </div>
                     
+                    <!-- NEUES PRIORISIERUNGS-DIAGRAMM -->
+                    <div class="mt-10 mb-6">
+                        <h4 class="text-xl font-bold text-gray-800 mb-4">Priorisierungs-Matrix</h4>
+                        <p class="text-gray-600 mb-6">Nutzen Sie diese Matrix, um Ihre in der Liste identifizierten Top-Prozesse einzuordnen:</p>
+                        
+                        <div class="relative w-full max-w-2xl mx-auto p-8 pt-10 pb-10">
+                            <!-- Y-Achse Label -->
+                            <div class="absolute -left-10 top-1/2 -translate-y-1/2 -rotate-90 transform flex items-center whitespace-nowrap">
+                                <span class="text-sm font-semibold text-gray-600 tracking-wide">Strategischer Nutzen / Potenzial</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block ml-1 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7l4-4m0 0l4 4m-4-4v18" /></svg>
+                            </div>
+                            
+                            <!-- X-Achse Label -->
+                            <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                <span class="text-sm font-semibold text-gray-600 tracking-wide">Technische Komplexität / Aufwand</span>
+                            </div>
+
+                            <!-- 2x2 Grid -->
+                            <div class="grid grid-cols-2 grid-rows-2 w-full border-2 border-gray-400 rounded-lg overflow-hidden shadow-md">
+                                <!-- Top-Left: Quick Wins -->
+                                <div class="h-44 p-4 border-r-2 border-b-2 border-gray-400 bg-green-50 flex flex-col justify-center">
+                                    <h5 class="font-bold text-lg text-green-800">1. Quick Wins</h5>
+                                    <p class="text-sm text-green-700">Hoher Nutzen, geringer Aufwand. (Sofort umsetzen!)</p>
+                                </div>
+                                
+                                <!-- Top-Right: Strategische Initiativen -->
+                                <div class="h-44 p-4 border-l-0 border-b-2 border-gray-400 bg-blue-50 flex flex-col justify-center">
+                                    <h5 class="font-bold text-lg text-blue-800">2. Strategische Initiativen</h5>
+                                    <p class="text-sm text-blue-700">Hoher Nutzen, hoher Aufwand. (Langfristig planen!)</p>
+                                </div>
+                                
+                                <!-- Bottom-Left: Nebensächliche Aufgaben -->
+                                <div class="h-44 p-4 border-r-2 border-t-0 border-gray-400 bg-gray-50 flex flex-col justify-center">
+                                    <h5 class="font-bold text-lg text-gray-700">3. Nebensächliche Aufgaben</h5>
+                                    <p class="text-sm text-gray-600">Geringer Nutzen, geringer Aufwand. (Bei Gelegenheit.)</p>
+                                </div>
+                                
+                                <!-- Bottom-Right: Überdenken -->
+                                <div class="h-44 p-4 border-l-0 border-t-0 border-gray-400 bg-red-50 flex flex-col justify-center">
+                                    <h5 class="font-bold text-lg text-red-800">4. Überdenken / Später</h5>
+                                    <p class="text-sm text-red-700">Geringer Nutzen, hoher Aufwand. (Vermeiden oder neu bewerten.)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ENDE NEUES DIAGRAMM -->
+                    
                     <div class="mt-8 p-5 bg-indigo-50 border border-indigo-200 rounded-lg text-indigo-800">
                         <h4 class="font-bold text-xl mb-2">💡 Quick Wins vs. Strategische Initiativen</h4>
                         <p class="text-base">
@@ -741,4 +789,8 @@
     </script>
 </body>
 </html>
+
+
+
+
 
