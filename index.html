@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KI-Potenzialanalyse für Architekturbüros</title>
+    <!-- Einbindung von Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Einbindung von Inter-Schriftart -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Basis-Stil für die Seite */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Tailwind 'gray-100' */
+            color: #374151; /* Tailwind 'gray-700' */
+        }
+
+        h1, h2, h3, h4 {
+            color: #1f2937; /* Tailwind 'gray-800' */
+        }
+        
+        /* Styling für die neuen Rating-Tasten */
+        .rating-group .rating-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            border: 2px solid #d1d5db; /* Tailwind 'gray-300' */
+            border-radius: 0.5rem; /* 'rounded-lg' */
+            font-weight: 600;
+            color: #4b5563; /* 'gray-600' */
+            background-color: #ffffff;
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .rating-group .rating-btn:hover {
+            border-color: #9ca3af; /* 'gray-400' */
+            background-color: #f9fafb; /* 'gray-50' */
+        }
+        
+        .rating-group .rating-btn.selected {
+            background-color: #2563eb; /* 'blue-600' */
+            border-color: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2), 0 2px 4px -2px rgba(37, 99, 235, 0.1);
+        }
+        
+        /* Radio-Button-Styling für Reifegrad (modernisiert) */
+        .reife-label {
+            display: block;
+            position: relative;
+            padding: 1.25rem;
+            padding-right: 3.5rem; /* Platz für Icon */
+            border: 2px solid #e5e7eb; /* 'gray-200' */
+            border-radius: 0.75rem; /* 'rounded-xl' */
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-color: #ffffff;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        .reife-label:hover {
+            border-color: #a5b4fc; /* 'indigo-300' */
+            background-color: #f5f3ff; /* 'indigo-50' */
+        }
+        
+        input[type="radio"].reife-input {
+            opacity: 0;
+            position: fixed;
+            width: 0;
+        }
+
+        input[type="radio"]:checked + .reife-label {
+            border-color: #4f46e5; /* 'indigo-600' */
+            background-color: #eef2ff; /* 'indigo-50' */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            ring: 2px;
+            ring-color: #4f46e5;
+        }
+        
+        .check-icon {
+            display: none;
+            position: absolute;
+            top: 50%;
+            right: 1.25rem;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            color: #4f46e5; /* 'indigo-600' */
+        }
+        
+        input[type="radio"]:checked + .reife-label .check-icon {
+            display: block;
+        }
+
+        /* Styling für die Prioritäts-Zellen */
+        .priority-cell {
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-align: center;
+            vertical-align: middle;
+            border-radius: 8px;
+            padding: 0.5rem;
+        }
+        
+        /* Tabellen-Header */
+        .table-header-cell {
+            padding: 1rem;
+            text-align: left;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #4b5563; /* 'gray-600' */
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background-color: #f9fafb; /* 'gray-50' */
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 lg:p-12">
+
+    <div class="max-w-7xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-200">
+        
+        <!-- Header -->
+        <header class="p-8 md:p-10 bg-gradient-to-r from-blue-700 to-indigo-800 text-white">
+            <h1 class="text-3xl md:text-5xl font-extrabold mb-3 leading-tight">KI-Potenzialanalyse</h1>
+            <p class="text-xl md:text-2xl font-light text-blue-100">Für Ihr Architekturbüro</p>
+            <p class="mt-6 text-blue-200 max-w-3xl leading-relaxed">
+                Dieses interaktive Tool unterstützt Sie dabei, systematisch die Prozesse in Ihrem Architekturbüro zu analysieren. Identifizieren Sie gezielt Potenziale für den Einsatz von Künstlicher Intelligenz (KI) und entwickeln Sie eine strategische Roadmap für die digitale Transformation.
+            </p>
+        </header>
+
+        <!-- Formular-Container -->
+        <form id="ki-check-form" class="p-8 md:p-10 lg:p-12 space-y-16">
+
+            <!-- Abschnitt 1: Strategische Zielsetzung -->
+            <section id="abschnitt-1">
+                <h2 class="text-3xl font-bold mb-8 pb-4 border-b border-gray-200">
+                    <span class="text-blue-600">1.</span> Strategische Zielsetzung <span class="text-gray-400 font-normal text-xl">(Das "Warum")</span>
+                </h2>
+                <p class="text-gray-600 mb-8 leading-relaxed max-w-4xl">
+                    Bewerten Sie auf einer Skala von 1 (niedrige Priorität) bis 5 (sehr hohe Priorität), welche der folgenden übergeordneten Ziele Sie mit dem Einsatz von KI in Ihrem Büro verfolgen. Ihre Angaben helfen, die zukünftige Ausrichtung zu definieren.
+                </p>
+                <!-- Grid-Layout für Ziel-Karten -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Zielsetzung 1: Effizienz -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                        <label class="block text-xl font-semibold text-gray-800 mb-2">Effizienzsteigerung & Kostensenkung</label>
+                        <p class="text-base text-gray-600 mb-5 h-12">Reduzierung von Routineaufgaben und Optimierung von Abläufen.</p>
+                        <div class="rating-group flex space-x-2" data-input-id="ziel-effizienz">
+                            <button type="button" class="rating-btn selected" data-value="1">1</button>
+                            <button type="button" class="rating-btn" data-value="2">2</button>
+                            <button type="button" class="rating-btn" data-value="3">3</button>
+                            <button type="button" class="rating-btn" data-value="4">4</button>
+                            <button type="button" class="rating-btn" data-value="5">5</button>
+                        </div>
+                        <input type="hidden" id="ziel-effizienz" name="ziel-effizienz" value="1">
+                    </div>
+                    
+                    <!-- Zielsetzung 2: Qualität -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                        <label class="block text-xl font-semibold text-gray-800 mb-2">Qualitätsverbesserung & Fehlerreduktion</label>
+                        <p class="text-base text-gray-600 mb-5 h-12">Minimierung von Fehlern, z.B. bei Planprüfung oder Leistungsverzeichnissen (LVs).</p>
+                        <div class="rating-group flex space-x-2" data-input-id="ziel-qualitaet">
+                            <button type="button" class="rating-btn selected" data-value="1">1</button>
+                            <button type="button" class="rating-btn" data-value="2">2</button>
+                            <button type="button" class="rating-btn" data-value="3">3</button>
+                            <button type="button" class="rating-btn" data-value="4">4</button>
+                            <button type="button" class="rating-btn" data-value="5">5</button>
+                        </div>
+                        <input type="hidden" id="ziel-qualitaet" name="ziel-qualitaet" value="1">
+                    </div>
+                    
+                    <!-- Zielsetzung 3: Wissen -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                        <label class="block text-xl font-semibold text-gray-800 mb-2">Wissensmanagement & -sicherung</label>
+                        <p class="text-base text-gray-600 mb-5 h-12">Internes Know-how im Unternehmen halten und zugänglich machen.</p>
+                        <div class="rating-group flex space-x-2" data-input-id="ziel-wissen">
+                            <button type="button" class="rating-btn" data-value="1">1</button>
+                            <button type="button" class="rating-btn" data-value="2">2</button>
+                            <button type="button" class="rating-btn selected" data-value="3">3</button>
+                            <button type="button" class="rating-btn" data-value="4">4</button>
+                            <button type="button" class="rating-btn" data-value="5">5</button>
+                        </div>
+                        <input type="hidden" id="ziel-wissen" name="ziel-wissen" value="3">
+                    </div>
+                    
+                    <!-- Zielsetzung 4: Kunden -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                        <label class="block text-xl font-semibold text-gray-800 mb-2">Verbesserung der Kundenkommunikation</label>
+                        <p class="text-base text-gray-600 mb-5 h-12">Erhöhte Transparenz und schnellere Updates für Bauherren.</p>
+                        <div class="rating-group flex space-x-2" data-input-id="ziel-kunden">
+                            <button type="button" class="rating-btn" data-value="1">1</button>
+                            <button type="button" class="rating-btn" data-value="2">2</button>
+                            <button type="button" class="rating-btn" data-value="3">3</button>
+                            <button type="button" class="rating-btn selected" data-value="4">4</button>
+                            <button type="button" class="rating-btn" data-value="5">5</button>
+                        </div>
+                        <input type="hidden" id="ziel-kunden" name="ziel-kunden" value="4">
+                    </div>
+                    
+                    <!-- Zielsetzung 5: Innovation -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                        <label class="block text-xl font-semibold text-gray-800 mb-2">Förderung von Innovation</label>
+                        <p class="text-base text-gray-600 mb-5 h-12">Entwicklung neuer Entwurfsmethoden und Dienstleistungsangebote.</p>
+                        <div class="rating-group flex space-x-2" data-input-id="ziel-innovation">
+                            <button type="button" class="rating-btn" data-value="1">1</button>
+                            <button type="button" class="rating-btn" data-value="2">2</button>
+                            <button type="button" class="rating-btn" data-value="3">3</button>
+                            <button type="button" class="rating-btn" data-value="4">4</button>
+                            <button type="button" class="rating-btn selected" data-value="5">5</button>
+                        </div>
+                        <input type="hidden" id="ziel-innovation" name="ziel-innovation" value="5">
+                    </div>
+                    
+                    <!-- Zielsetzung 6: Mitarbeiter -->
+                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+                        <label class="block text-xl font-semibold text-gray-800 mb-2">Mitarbeiter-Entlastung & -förderung</label>
+                        <p class="text-base text-gray-600 mb-5 h-12">Fokus auf kreative Kernaufgaben durch Automatisierung repetitiver Tätigkeiten.</p>
+                        <div class="rating-group flex space-x-2" data-input-id="ziel-mitarbeiter">
+                            <button type="button" class="rating-btn selected" data-value="1">1</button>
+                            <button type="button" class="rating-btn" data-value="2">2</button>
+                            <button type="button" class="rating-btn" data-value="3">3</button>
+                            <button type="button" class="rating-btn" data-value="4">4</button>
+                            <button type="button" class="rating-btn" data-value="5">5</button>
+                        </div>
+                        <input type="hidden" id="ziel-mitarbeiter" name="ziel-mitarbeiter" value="1">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Abschnitt 2: Prozess-Analyse -->
+            <section id="abschnitt-2">
+                <h2 class="text-3xl font-bold mb-8 pb-4 border-b border-gray-200">
+                    <span class="text-blue-600">2.</span> Prozess-Analyse nach Leistungsphasen <span class="text-gray-400 font-normal text-xl">(Das "Wo")</span>
+                </h2>
+                <p class="text-gray-600 mb-8 leading-relaxed max-w-4xl">
+                    Identifizieren Sie konkrete Tätigkeiten in Ihrem Workflow. Bewerten Sie den heutigen manuellen Aufwand und das geschätzte Potenzial für KI-Unterstützung (1=gering, 5=sehr hoch). Daraus ergibt sich eine Priorität für die Digitalisierung (Aufwand * Potenzial).
+                </p>
+                <div class="overflow-x-auto rounded-xl shadow-lg border border-gray-200">
+                    <table class="min-w-full border-collapse">
+                        <thead>
+                            <tr>
+                                <th class="table-header-cell w-1/12">LP</th>
+                                <th class="table-header-cell w-4/12">Prozess / Tätigkeit</th>
+                                <th class="table-header-cell w-2/12 min-w-[280px]">Heutiger Aufwand (1-5)</th>
+                                <th class="table-header-cell w-2/12 min-w-[280px]">KI-Potenzial (1-5)</th>
+                                <th class="table-header-cell text-center w-1/12">Priorität</th>
+                                <th class="table-header-cell w-2/12">Mögliche KI-Lösung</th>
+                            </tr>
+                        </thead>
+                        <tbody id="prozess-tabelle" class="bg-white">
+                            <!-- Zeilen werden hier dynamisch eingefügt -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            
+            <!-- Abschnitt 3: Digitale Reifegrad-Analyse -->
+            <section id="abschnitt-3">
+                <h2 class="text-3xl font-bold mb-8 pb-4 border-b border-gray-200">
+                    <span class="text-blue-600">3.</span> Digitale Reifegrad-Analyse <span class="text-gray-400 font-normal text-xl">(Das "Wie gut sind wir vorbereitet?")</span>
+                </h2>
+                <p class="text-gray-600 mb-8 leading-relaxed max-w-4xl">
+                    Bewerten Sie ehrlich den aktuellen Stand Ihrer digitalen Infrastruktur und Kultur. Dies ist entscheidend, um den richtigen Einstiegspunkt für die KI-Integration zu finden.
+                </p>
+                <div class="space-y-12">
+                    
+                    <!-- SVG Check Icon Definition -->
+                    <svg class="hidden">
+                        <symbol id="check-circle" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </symbol>
+                    </svg>
+                    
+                    <!-- Frage 1: Daten & Infrastruktur -->
+                    <div>
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-6">1. Daten & Infrastruktur</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <input type="radio" name="reife-daten" id="daten-a" value="A" class="reife-input" checked>
+                            <label for="daten-a" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(A) Digitaler Einsteiger</span>
+                                <span class="text-gray-600">Unsere Projektdaten liegen primär auf Papier oder in unstrukturierten Ordnern.</span>
+                            </label>
+                            
+                            <input type="radio" name="reife-daten" id="daten-b" value="B" class="reife-input">
+                            <label for="daten-b" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(B) Digitaler Anwender</span>
+                                <span class="text-gray-600">Wir nutzen einen zentralen Server/NAS, aber die Ordnerstruktur ist oft inkonsistent.</span>
+                            </label>
+                            
+                            <input type="radio" name="reife-daten" id="daten-c" value="C" class="reife-input">
+                            <label for="daten-c" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(C) Digitaler Optimierer</span>
+                                <span class="text-gray-600">Wir nutzen eine Cloud-Lösung (z.B. MS 365) und haben eine standardisierte Projekt-Ablagestruktur.</span>
+                            </label>
+                            
+                            <input type="radio" name="reife-daten" id="daten-d" value="D" class="reife-input">
+                            <label for="daten-d" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(D) Digitaler Vorreiter</span>
+                                <span class="text-gray-600">Wir arbeiten mit einer Common Data Environment (CDE) und/oder BIM-Modellen als "Single Source of Truth".</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Frage 2: Tools & Software -->
+                    <div>
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-6">2. Tools & Software</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <input type="radio" name="reife-tools" id="tools-a" value="A" class="reife-input" checked>
+                            <label for="tools-a" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(A) Digitaler Einsteiger</span>
+                                <span class="text-gray-600">Wir nutzen hauptsächlich Office-Programme (Word, Excel) und einfache CAD-Software.</span>
+                            </label>
+                            
+                            <input type="radio" name="reife-tools" id="tools-b" value="B" class="reife-input">
+                            <label for="tools-b" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(B) Digitaler Anwender</span>
+                                <span class="text-gray-600">Wir setzen professionelle CAD/BIM-Software und eine AVA-Software ein, aber die Systeme sind nicht integriert.</span>
+                            </label>
+                            
+                            <input type="radio" name="reife-tools" id="tools-c" value="C" class="reife-input">
+                            <label for="tools-c" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(C) Digitaler Optimierer</span>
+                                <span class="text-gray-600">Unsere Kernanwendungen (BIM, AVA, Projektmanagement) sind teilweise über Schnittstellen verbunden.</span>
+                            </label>
+                            
+                            <input type="radio" name="reife-tools" id="tools-d" value="D" class="reife-input">
+                            <label for="tools-d" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(D) Digitaler Vorreiter</span>
+                                <span class="text-gray-600">Wir nutzen eine integrierte Plattform (z.B. Autodesk Construction Cloud) und haben bereits erste Erfahrungen mit APIs.</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Frage 3: Prozesse & Workflows -->
+                    <div>
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-6">3. Prozesse & Workflows</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <input type="radio" name="reife-prozesse" id="prozesse-a" value="A" class="reife-input" checked>
+                            <label for="prozesse-a" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(A) Digitaler Einsteiger</span>
+                                <span class="text-gray-600">Prozesse sind stark von einzelnen Mitarbeitern abhängig und wenig standardisiert.</span>
+                            </label>
+                            
+                            <input type="radio" name="reife-prozesse" id="prozesse-b" value="B" class="reife-input">
+                            <label for="prozesse-b" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(B) Digitaler Anwender</span>
+                                <span class="text-gray-600">Es gibt Vorlagen (z.B. für LVs, Protokolle), aber deren Anwendung ist nicht durchgängig.</span>
+                            </label>
+                            
+                            <input type="radio" name="reife-prozesse" id="prozesse-c" value="C" class="reife-input">
+                            <label for="prozesse-c" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(C) Digitaler Optimierer</span>
+                                <span class="text-gray-600">Kernprozesse wie die LV-Erstellung oder das Mängelmanagement folgen einem definierten, digitalen Workflow.</span>
+                            </label>
+                            
+                            <input type="radio" name="reife-prozesse" id="prozesse-d" value="D" class="reife-input">
+                            <label for="prozesse-d" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(D) Digitaler Vorreiter</span>
+                                <span class="text-gray-600">Unsere Prozesse sind digital abgebildet, automatisiert und werden kontinuierlich auf Basis von Daten optimiert.</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Frage 4: Mitarbeiter & Kultur -->
+                    <div>
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-6">4. Mitarbeiter & Kultur</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <input type="radio" name="reife-kultur" id="kultur-a" value="A" class="reife-input" checked>
+                            <label for="kultur-a" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(A) Digitaler Einsteiger</span>
+                                <span class="text-gray-600">Es gibt erhebliche Skepsis gegenüber neuen digitalen Werkzeugen.</span>
+                            </label>
+                            
+                            <input type="radio" name="reife-kultur" id="kultur-b" value="B" class="reife-input">
+                            <label for="kultur-b" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(B) Digitaler Anwender</span>
+                                <span class="text-gray-600">Einige Mitarbeiter sind offen für Neues, die Mehrheit bevorzugt aber bewährte Abläufe.</span>
+                            </label>
+                            
+                            <input type="radio" name="reife-kultur" id="kultur-c" value="C" class="reife-input">
+                            <label for="kultur-c" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(C) Digitaler Optimierer</span>
+                                <span class="text-gray-600">Das Team ist generell digital-affin und offen für Schulungen und neue Tools.</span>
+                            </label>
+                            
+                            <input type="radio" name="reife-kultur" id="kultur-d" value="D" class="reife-input">
+                            <label for="kultur-d" class="reife-label">
+                                <svg class="check-icon"><use href="#check-circle"></use></svg>
+                                <span class="font-bold text-gray-800 block text-lg">(D) Digitaler Vorreiter</span>
+                                <span class="text-gray-600">Wir fördern aktiv eine Kultur des Experimentierens und des lebenslangen Lernens.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Analyse-Button -->
+            <div>
+                <button type="button" id="analyse-button" class="w-full mt-10 bg-indigo-600 text-white font-bold py-5 px-8 rounded-xl text-2xl md:text-3xl hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 flex items-center justify-center gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 3.064A1 1 0 0111 4v5.382l3.243-2.316a1 1 0 011.23 1.57l-4 3a1 1 0 01-1.23 0l-4-3a1 1 0 01.325-1.636l3.23.232V4a1 1 0 01-.445-.936zM10 13a1 1 0 011 1v2a1 1 0 11-2 0v-2a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    Analyse durchführen & Auswertung anzeigen
+                </button>
+            </div>
+
+        </form>
+
+        <!-- Abschnitt 4: Auswertung & Nächste Schritte (Dynamisch) -->
+        <section id="abschnitt-4" class="p-8 md:p-10 lg:p-12 bg-gray-50 hidden rounded-b-2xl">
+            <h2 class="text-3xl font-bold text-indigo-800 mb-8 pb-4 border-b border-gray-200">
+                <span class="text-indigo-600">4.</span> Ihre Auswertung & Nächste Schritte
+            </h2>
+            <p class="text-gray-700 mb-10 leading-relaxed text-lg">Basierend auf Ihren Eingaben ergibt sich folgende Diagnose und eine darauf aufbauende Roadmap zur KI-Integration.</p>
+            
+            <div class="space-y-12">
+                
+                <!-- 1. Ihr Reifegrad-Profil (Dynamisch) -->
+                <div class="p-8 bg-white border border-gray-200 rounded-xl shadow-xl">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-5 flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                        </svg>
+                        Ihr Digitaler Reifegrad
+                    </h3>
+                    <div id="auswertung-reifegrad" class="text-lg text-gray-700 leading-relaxed">
+                        <!-- Inhalt wird per JS eingefügt -->
+                    </div>
+                </div>
+                
+                <!-- 2. Ihre priorisierten Anwendungsfälle (Dynamisch) -->
+                <div class="p-8 bg-white border border-gray-200 rounded-xl shadow-xl">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-5 flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Top Priorisierte KI-Anwendungsfälle
+                    </h3>
+                    <p class="text-gray-700 mb-6 leading-relaxed">
+                        Dies sind die 5 Prozesse mit der höchsten "Priorität" (Aufwand * Potenzial) basierend auf Ihrer Eingabe. Diese eignen sich ideal als potenzielle Pilotprojekte:
+                    </p>
+                    <div id="auswertung-prioritaeten" class="text-lg text-gray-700 leading-relaxed">
+                        <!-- Inhalt wird per JS eingefügt -->
+                    </div>
+                    
+                    <div class="mt-8 p-5 bg-indigo-50 border border-indigo-200 rounded-lg text-indigo-800">
+                        <h4 class="font-bold text-xl mb-2">💡 Quick Wins vs. Strategische Initiativen</h4>
+                        <p class="text-base">
+                            Identifizieren Sie aus Ihrer Top-Liste Prozesse, die mit geringem Aufwand und fertigen Tools (Quick Wins) umgesetzt werden können. Parallel dazu können strategisch wichtige, aber technisch komplexere Projekte (z.B. Aufbau eines Wissens-Hubs) längerfristig geplant werden.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- 3. Konkrete nächste Schritte (Statischer Teil) -->
+                <div class="p-8 bg-white border border-gray-200 rounded-xl shadow-xl">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-5 flex items-center gap-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.707-10.293a1 1 0 00-1.414-1.414l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414l-3-3z" clip-rule="evenodd" />
+                        </svg>
+                        Vorgeschlagene Nächste Schritte
+                    </h3>
+                    <ul class="list-disc list-outside space-y-6 pl-6 text-gray-700 text-lg leading-relaxed">
+                        <li>
+                            <strong class="text-gray-900">Pilotprojekt definieren:</strong> Wählen Sie einen identifizierten "Quick Win". Starten Sie das Tool in einem überschaubaren, neuen Projekt.
+                            <br><em class="text-base text-gray-600"><strong>Aktion (Beispiel):</strong> Testlizenz für ein Baudokumentations-Tool anfordern und für Projekt XY einsetzen.</em>
+                        </li>
+                        <li>
+                            <strong class="text-gray-900">Grundlagen schaffen:</strong> Beginnen Sie parallel mit dem Aufbau eines Wissens-Hubs, falls relevant. Dies ist die Basis für viele KI-Anwendungen.
+                            <br><em class="text-base text-gray-600"><strong>Aktion (Beispiel):</strong> Alle relevanten Ö-Normen und Dokumente von 3-5 Referenzprojekten in einer zentralen, KI-fähigen Ablage sammeln (z.B. MS 365 mit Copilot).</em>
+                        </li>
+                        <li>
+                            <strong class="text-gray-900">Team befähigen:</strong> Planen Sie eine interne Vorstellung der Ziele und des ausgewählten Pilotprojekts. Bieten Sie praxisnahe Schulungen an.
+                            <br><em class="text-base text-gray-600"><strong>Aktion (Beispiel):</strong> 1-stündigen internen Workshop zum Pilot-Tool und ersten Erfahrungen.</em>
+                        </li>
+                        <li>
+                            <strong class="text-gray-900">Rechtliche & datenschutzrechtliche Prüfung:</strong> Klären Sie DSGVO-Konformität bei Tool-Auswahl. Auftragsverarbeitungsvertrag (AVV) ist bei Kundendaten notwendig.
+                            <br><em class="text-base text-gray-600"><strong>Aktion (Beispiel):</strong> Anbieter des Pilot-Tools nach Serverstandort und Muster-AVV fragen.</em>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </div> <!-- Ende max-w-7xl -->
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            
+            // --- DATEN FÜR ABSCHNITT 2 ---
+            const prozessDaten = [
+                { lp: "LP 1-3", prozess: "Recherche von Normen, Baurecht, Ö-Normen", loesung: "KI-Wissens-Hub (z.B. NotebookLM)", aufwand: 1, potenzial: 1 },
+                { lp: "LP 1-3", prozess: "Erstellung von Machbarkeitsstudien", loesung: "KI-Analyse-Tools (z.B. Spacemaker, Syte)", aufwand: 1, potenzial: 1 },
+                { lp: "LP 1-3", prozess: "Generierung von Entwurfsvarianten (Massenmodelle, Grundrisse)", loesung: "Generative Design Tools (z.B. TestFit)", aufwand: 1, potenzial: 1 },
+                { lp: "LP 4", prozess: "Prüfung von Plänen auf Konformität mit Bebauungsplänen", loesung: "Automatisierte Planprüfung (z.B. planBIC)", aufwand: 1, potenzial: 1 },
+                { lp: "LP 5", prozess: "Detaillierung von Plänen, Kollisionsprüfung", loesung: "BIM-Prüfsoftware, KI-gestützte Detailerkennung", aufwand: 1, potenzial: 1 },
+                { lp: "LP 6", prozess: "Erstellung von Leistungsverzeichnissen (LVs)", loesung: "Textgenerierung aus Wissens-Hub, AVA-Software", aufwand: 1, potenzial: 1 },
+                { lp: "LP 6", prozess: "Mengenermittlung aus Plänen/Modellen", loesung: "BIM-Integration, Computer Vision", aufwand: 1, potenzial: 1 },
+                { lp: "LP 7", prozess: "Prüfung von LVs auf Konsistenz und Normenkonformität", loesung: "KI-Dokumentenanalyse", aufwand: 1, potenzial: 1 },
+                { lp: "LP 7", prozess: "Kostenberechnung und Vergleich von Angeboten", loesung: "KI-gestützte AVA-Software (z.B. SIDOUN KIAVA)", aufwand: 1, potenzial: 1 },
+                { lp: "LP 8", prozess: "Erstellung des Bautagebuchs (Text, Fotos, Wetter)", loesung: "Mobile Diktier-/Foto-Apps (z.B. Compa, GeoCapture)", aufwand: 1, potenzial: 1 },
+                { lp: "LP 8", prozess: "Mängelerfassung und -dokumentation per Foto/Sprache", loesung: "KI-Mängelerkennung (z.B. OpenExperience, Agorum)", aufwand: 1, potenzial: 1 },
+                { lp: "LP 8", prozess: "Überwachung des Baufortschritts", loesung: "Bildanalyse von Drohnen-/Kameraaufnahmen", aufwand: 1, potenzial: 1 },
+                { lp: "LP 9", prozess: "Nachverfolgung von Gewährleistungsfristen und Mängeln", loesung: "Strukturiertes digitales Archiv (aus LP 8)", aufwand: 1, potenzial: 1 },
+                { lp: "Büro- übergreifend", prozess: "Interne Wissensabfragen (alte Projekte, Standards)", loesung: "Zentraler KI-Wissens-Hub", aufwand: 1, potenzial: 1 },
+                { lp: "Büro- übergreifend", prozess: "Erstellung von Projekt-Updates für Bauherren", loesung: "Automatisierte Berichtsgenerierung (KI-Agent)", aufwand: 1, potenzial: 1 },
+                { lp: "Büro- übergreifend", prozess: "Einarbeitung neuer Mitarbeiter", loesung: "Interaktiver Wissens-Hub als 'Mentor'", aufwand: 1, potenzial: 1 },
+            ];
+
+            const prozessTabelleBody = document.getElementById('prozess-tabelle');
+            
+            // --- FUNKTIONEN ---
+
+            /**
+             * Erstellt die HTML-Struktur für eine 1-5 Rating-Tastengruppe
+             * @param {string} type - 'aufwand' oder 'potenzial'
+             * @param {number} index - Der Index der Zeile (prozessDaten)
+             * @param {number} currentValue - Der aktuell ausgewählte Wert (z.B. 1)
+             * @returns {string} - HTML-String
+             */
+            function createRatingGroup(type, index, currentValue) {
+                let buttonsHtml = '';
+                for (let i = 1; i <= 5; i++) {
+                    const isSelected = (i === currentValue) ? 'selected' : '';
+                    buttonsHtml += `<button type="button" class="rating-btn ${isSelected}" data-value="${i}">${i}</button>`;
+                }
+                
+                return `
+                    <div class="rating-group flex space-x-2" data-type="${type}" data-id="${index}">
+                        ${buttonsHtml}
+                    </div>
+                `;
+            }
+
+            // Füllt die Prozess-Tabelle (Abschnitt 2)
+            function erstelleProzessTabelle() {
+                let currentLp = "";
+                prozessDaten.forEach((item, index) => {
+                    const row = document.createElement('tr');
+                    row.setAttribute('data-id', index);
+                    row.classList.add('border-b', 'border-gray-100'); // Leichte Trennlinie
+                    
+                    let lpCell = '';
+                    if (item.lp !== currentLp) {
+                        currentLp = item.lp;
+                        const rowSpan = prozessDaten.filter(p => p.lp === currentLp).length;
+                        lpCell = `<td class="p-4 text-sm font-semibold text-gray-700 bg-gray-50 align-top border-r border-gray-100" rowspan="${rowSpan}">${item.lp}</td>`;
+                    }
+                    
+                    row.innerHTML = `
+                        ${lpCell}
+                        <td class="p-4 text-sm text-gray-700 align-top">${item.prozess}</td>
+                        <td class="p-4 align-top">
+                            ${createRatingGroup('aufwand', index, item.aufwand)}
+                        </td>
+                        <td class="p-4 align-top">
+                            ${createRatingGroup('potenzial', index, item.potenzial)}
+                        </td>
+                        <td class="p-4 priority-cell" id="prio-${index}">
+                            ${item.aufwand * item.potenzial}
+                        </td>
+                        <td class="p-4 text-sm text-gray-600 align-top">${item.loesung}</td>
+                    `;
+                    prozessTabelleBody.appendChild(row);
+                });
+            }
+
+            // Aktualisiert die Priorität für eine Zeile in Abschnitt 2
+            function updatePrioritaet(index) {
+                const row = prozessTabelleBody.querySelector(`tr[data-id="${index}"]`);
+                if (!row) return;
+
+                // Daten direkt aus dem Array lesen, da sie vom Click-Event aktualisiert wurden
+                const aufwand = prozessDaten[index].aufwand;
+                const potenzial = prozessDaten[index].potenzial;
+                const prioritaet = aufwand * potenzial;
+
+                const prioCell = row.querySelector(`#prio-${index}`);
+                prioCell.textContent = prioritaet;
+
+                // Farbliche Hervorhebung der Priorität
+                prioCell.style.color = '#1f2937';
+                prioCell.style.backgroundColor = 'transparent';
+                if (prioritaet >= 20) {
+                    prioCell.style.color = '#b91c1c'; // 'red-700'
+                    prioCell.style.backgroundColor = '#fee2e2'; // 'red-100'
+                } else if (prioritaet >= 12) {
+                    prioCell.style.color = '#b45309'; // 'amber-700'
+                    prioCell.style.backgroundColor = '#fef3c7'; // 'amber-100'
+                } else if (prioritaet >= 6) {
+                    prioCell.style.color = '#047857'; // 'emerald-700'
+                    prioCell.style.backgroundColor = '#d1fae5'; // 'emerald-100'
+                } else if (prioritaet > 0) {
+                    prioCell.style.color = '#1d4ed8'; // 'blue-700'
+                    prioCell.style.backgroundColor = '#dbeafe'; // 'blue-100'
+                }
+            }
+            
+            // Führt die Gesamtanalyse durch (Abschnitt 4)
+            function fuehreAnalyseDurch() {
+                // 1. Reifegrad-Profil
+                const reifeWerte = [
+                    document.querySelector('input[name="reife-daten"]:checked').value,
+                    document.querySelector('input[name="reife-tools"]:checked').value,
+                    document.querySelector('input[name="reife-prozesse"]:checked').value,
+                    document.querySelector('input[name="reife-kultur"]:checked').value,
+                ];
+                
+                const counts = { A: 0, B: 0, C: 0, D: 0 };
+                reifeWerte.forEach(val => counts[val]++);
+                
+                let mehrheit = 'A';
+                let maxCount = 0;
+                Object.entries(counts).forEach(([key, count]) => {
+                    if (count > maxCount) {
+                        maxCount = count;
+                        mehrheit = key;
+                    }
+                });
+
+                const reifegradProfile = {
+                    A: '<p><strong class="text-red-700 text-xl block mb-2">Digitaler Einsteiger</strong> Ihr Fokus sollte auf der Schaffung grundlegender digitaler Strukturen liegen: Digitalisierung von Dokumenten, Etablierung einfacher, standardisierter Prozesse und Schulung der Mitarbeiter in digitalen Basiskompetenzen.</p>',
+                    B: '<p><strong class="text-yellow-600 text-xl block mb-2">Digitaler Anwender</strong> Sie verfügen über eine solide Basis. Der nächste Schritt ist die Integration bestehender digitaler Tools und die Automatisierung erster, klar definierter Routineaufgaben, um Effizienz zu steigern.</p>',
+                    C: '<p><strong class="text-green-700 text-xl block mb-2">Digitaler Optimierer</strong> Sie sind gut vorbereitet für fortgeschrittenere KI-Anwendungen. Der Aufbau eines zentralen Wissens-Hubs und die Einführung von KI-gestützten Assistenzsystemen sind jetzt sinnvoll, um Prozesse weiter zu verfeinern.</p>',
+                    D: '<p><strong class="text-blue-700 text-xl block mb-2">Digitaler Vorreiter</strong> Ihr Büro kann die Entwicklung eigener KI-Agenten und die vollständige Integration von KI in Ihre Kernwertschöpfungskette in Betracht ziehen. Fokus auf Innovation und datengesteuerte Entscheidungsfindung.</p>'
+                };
+                
+                document.getElementById('auswertung-reifegrad').innerHTML = reifegradProfile[mehrheit];
+                
+                // 2. Priorisierte Anwendungsfälle
+                const prioritaeten = prozessDaten.map(item => ({
+                    prozess: item.prozess,
+                    prioritaet: item.aufwand * item.potenzial,
+                    loesung: item.loesung
+                }));
+                
+                prioritaeten.sort((a, b) => b.prioritaet - a.prioritaet);
+                
+                const topPrioritaeten = prioritaeten.filter(p => p.prioritaet > 0).slice(0, 5);
+                
+                const prioritaetenContainer = document.getElementById('auswertung-prioritaeten');
+                if (topPrioritaeten.length === 0) {
+                    prioritaetenContainer.innerHTML = '<p class="text-gray-600">Sie haben noch keine Prozesse priorisiert (Priorität > 0). Bitte verwenden Sie die Tasten in Abschnitt 2, um eine Prioritätenliste zu erstellen.</p>';
+                } else {
+                    let html = '<ol class="list-decimal list-inside space-y-4">';
+                    topPrioritaeten.forEach(item => {
+                        html += `
+                            <li class="text-gray-800">
+                                <strong class="text-gray-900">${item.prozess}</strong> 
+                                <span class="text-gray-500 font-semibold">(Priorität: ${item.prioritaet})</span>
+                                <br>
+                                <span class="text-sm text-indigo-700 ml-4"><em>Mögliche Lösung: ${item.loesung}</em></span>
+                            </li>
+                        `;
+                    });
+                    html += '</ol>';
+                    prioritaetenContainer.innerHTML = html;
+                }
+
+                // 3. Auswertung anzeigen und hinscrollen
+                const auswertungSektion = document.getElementById('abschnitt-4');
+                auswertungSektion.classList.remove('hidden');
+                auswertungSektion.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            // --- EVENT LISTENERS ---
+
+            // Initialisiere Tabelle
+            erstelleProzessTabelle();
+            
+            // Initialisiere Prioritäten-Werte
+            prozessDaten.forEach((_, index) => updatePrioritaet(index));
+
+            // Event Listener für alle Rating-Tasten in Abschnitt 2
+            prozessTabelleBody.addEventListener('click', function(e) {
+                const btn = e.target.closest('.rating-btn');
+                if (!btn) return;
+
+                const group = btn.closest('.rating-group');
+                const index = group.dataset.id;
+                const type = group.dataset.type; // 'aufwand' oder 'potenzial'
+                const value = parseInt(btn.dataset.value);
+
+                if (type === 'aufwand') {
+                    prozessDaten[index].aufwand = value;
+                } else {
+                    prozessDaten[index].potenzial = value;
+                }
+                
+                // UI für diese Gruppe aktualisieren
+                group.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                
+                // Priorität neu berechnen
+                updatePrioritaet(index);
+            });
+            
+            // Event Listener für alle Rating-Tasten in Abschnitt 1
+            document.getElementById('abschnitt-1').addEventListener('click', function(e) {
+                const btn = e.target.closest('.rating-btn');
+                if (!btn) return;
+
+                const group = e.target.closest('.rating-group');
+                const inputId = group.dataset.inputId;
+                const value = btn.dataset.value;
+
+                // Wert im versteckten Input speichern
+                document.getElementById(inputId).value = value;
+                
+                // UI für diese Gruppe aktualisieren
+                group.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+            });
+            
+            // Event Listener für den Analyse-Button
+            document.getElementById('analyse-button').addEventListener('click', fuehreAnalyseDurch);
+
+        });
+    </script>
+</body>
+</html>
+
