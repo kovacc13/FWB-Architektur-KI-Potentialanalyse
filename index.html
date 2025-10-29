@@ -466,13 +466,13 @@
                         <!-- Inhalt wird per JS eingefügt -->
                     </div>
                     
-                    <!-- NEUES PRIORISIERUNGS-DIAGRAMM -->
+                    <!-- PRIORISIERUNGS-DIAGRAMM (MIT FIX) -->
                     <div class="mt-10 mb-6">
                         <h4 class="text-xl font-bold text-gray-800 mb-4">Priorisierungs-Matrix</h4>
                         <p class="text-gray-600 mb-6">Nutzen Sie diese Matrix, um Ihre in der Liste identifizierten Top-Prozesse einzuordnen:</p>
                         
                         <div class="relative w-full max-w-2xl mx-auto p-8 pt-10 pb-10">
-                            <!-- Y-Achse Label -->
+                            <!-- Y-Achse Label (FIXED: -left-10 and whitespace-nowrap) -->
                             <div class="absolute -left-10 top-1/2 -translate-y-1/2 -rotate-90 transform flex items-center whitespace-nowrap">
                                 <span class="text-sm font-semibold text-gray-600 tracking-wide">Strategischer Nutzen / Potenzial</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block ml-1 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7l4-4m0 0l4 4m-4-4v18" /></svg>
@@ -512,7 +512,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- ENDE NEUES DIAGRAMM -->
+                    <!-- ENDE DIAGRAMM -->
                     
                     <div class="mt-8 p-5 bg-indigo-50 border border-indigo-200 rounded-lg text-indigo-800">
                         <h4 class="font-bold text-xl mb-2">💡 Quick Wins vs. Strategische Initiativen</h4>
@@ -704,7 +704,7 @@
                     loesung: item.loesung
                 }));
                 
-                prioritaeten.sort((a, b) => b.prioritaet - a.prioritaet);
+                prioritaeten.sort((a, b) => b.prioritaD - a.prioritaet);
                 
                 const topPrioritaeten = prioritaeten.filter(p => p.prioritaet > 0).slice(0, 5);
                 
@@ -738,7 +738,7 @@
             // Initialisiere Tabelle
             erstelleProzessTabelle();
             
-            // Initialisiere Prioritäten-Werte
+            // InitialisiDsiere Prioritäten-Werte
             prozessDaten.forEach((_, index) => updatePrioritaet(index));
 
             // Event Listener für alle Rating-Tasten in Abschnitt 2
@@ -789,8 +789,4 @@
     </script>
 </body>
 </html>
-
-
-
-
 
